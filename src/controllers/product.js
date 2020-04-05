@@ -110,4 +110,16 @@ module.exports = {
             res.json(result)
         }).catch(err => console.log(err))
     },
+    login: (req,res)=>{
+        // email only
+        productModels.login(req.body.email)
+        .then(result => {
+            const password = bcrypt.compareSync(req.body.password,result[0].password)
+            if(password === true){
+                res.json('Login Success')
+            }else{
+                res.json('Password Wrong')
+            }
+        }).catch(err => console.log(err))
+    },
 }

@@ -40,6 +40,7 @@ Router
     .post('/cart', ProductController.addToCart)
     .delete('/deletecart', ProductController.deleteCart)
     .post('/order', ProductController.order)
-    .post('/register', ProductController.register);
+    .post('/register', ProductController.register)
+    .get('/login', ProductController.login);
 
 module.exports = Router;

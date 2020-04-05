@@ -165,7 +165,7 @@ module.exports = {
     },
     login: (email)=>{
         return new Promise((resolve, reject)=>{
-            connecting.query(`SELETC * FROM users WHERE ?`,email, (err, result)=>{
+            connecting.query(`SELECT * FROM users WHERE email = ?`,email, (err, result)=>{
                 if(!err){
                     resolve(result);
                 }else{
