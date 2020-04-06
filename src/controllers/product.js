@@ -11,7 +11,7 @@ module.exports = {
     },
 
     insertProduct: (req,res)=>{
-        req.body['image'] = `http://localhost:4000/upload/${req.file.filename}`;
+        req.body['image'] = `http://54.157.227.216:4000/upload/${req.file.filename}`;
         productModels.InsertProduct(req.body)
         .then(result=>{
             req.body['id_product'] = result.insertId
@@ -77,10 +77,6 @@ module.exports = {
         }).catch(err => console.log(err))
     },
     addToCart: (req,res)=>{
-        // const stock = req.body.stock;
-        // const price = stock * req.body.price;
-        // const {id_product, product_name, description, image, category} = req.body;
-        // const data = {id_product, product_name, description, image, category, price };
         productModels.addToCart(req.body)
         .then(result => {
             data['id_cart']= result.insertId
