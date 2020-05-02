@@ -32,12 +32,16 @@ module.exports = {
         }).catch(err=>console.log(err))
     },
     deleteProduct: (req,res)=>{
-        productModels.deleteProduct(req.params.id_product)
+        productModels.detailProduct(req.params.id_product)
         .then(result=>{
-            result['id_product'] = req.params.id_product
-            res.json(result)
+            productModels.deleteProduct(req.params.id_product, result[0].image)
+            .then(result=>{
+                result['id_product'] = req.params.id_product
+                res.json(result)
+            }).catch(err=>console.log(err))
         }).catch(err=>console.log(err))
     },
+
     detailProduct: (req,res)=>{
         productModels.detailProduct(req.params.id_product)
         .then(result=>{
