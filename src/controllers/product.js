@@ -11,7 +11,7 @@ module.exports = {
     },
 
     insertProduct: (req,res)=>{
-        req.body['image'] = `http://54.157.227.216:4000/upload/${req.file.filename}`;
+        req.body['image'] = `http://localhost:4000/upload/${req.file.filename}`;
         productModels.InsertProduct(req.body)
         .then(result=>{
             req.body['id_product'] = result.insertId
@@ -19,10 +19,16 @@ module.exports = {
         }).catch(err=>console.log(err))
     },
     updateProduct: (req,res)=>{
-        productModels.updateProduct(req.body, req.params.id_product)
+        productModels.updateProduct(req.body, req.body.id_product)
         .then(result=>{
             req.body['id_product'] = req.params.id_product
             res.json(req.body)
+        }).catch(err=>console.log(err))
+    },
+    updateStockProduct: (req,res)=>{
+        productModels.updateStockProduct(req.body.qty, req.body.id_product)
+        .then(result=>{
+            res.json(result)
         }).catch(err=>console.log(err))
     },
     deleteProduct: (req,res)=>{
@@ -77,15 +83,29 @@ module.exports = {
         }).catch(err => console.log(err))
     },
     addToCart: (req,res)=>{
-        productModels.addToCart(req.body)
+        const {id_product, product_name, description, image, category, price,stock} = req.body
+        const data = {id_product, product_name, description, image, category, price,stock}
+        productModels.addToCart(data)
         .then(result => {
             data['id_cart']= result.insertId
             res.json(data)
         }).catch(err => console.log(err))
     },
     deleteCart: (req,res)=>{
-        const id_cart = req.body;
+        const id_cart = req.params.id_cart
         productModels.deleteCart(id_cart)
+        .then(result => {
+            res.json(result)
+        }).catch(err => console.log(err))
+    },
+    updateCart: (req,res)=>{
+        productModels.updateCart(req.body,req.body.id_cart)
+        .then(result => {
+            res.json(result)
+        }).catch(err => console.log(err))
+    },
+    deleteAllCart: (req,res)=>{
+        productModels.deleteAllCart()
         .then(result => {
             res.json(result)
         }).catch(err => console.log(err))
@@ -112,10 +132,30 @@ module.exports = {
         .then(result => {
             const password = bcrypt.compareSync(req.body.password,result[0].password)
             if(password === true){
-                res.json('Login Success')
+                res.json(req.body.email)
             }else{
                 res.json('Password Wrong')
             }
+        }).catch(err => console.log(err))
+    },
+    
+    incomeInDay: (req,res)=>{
+        // console.log(req.body.date)
+        productModels.incomeInDay(req.body.date)
+        .then(result => {
+            res.json(result)
+        }).catch(err => console.log(err))
+    },
+    incomeInYear: (req,res)=>{
+        productModels.incomeInYear(req.body.year)
+        .then(result => {
+            res.json(result)
+        }).catch(err => console.log(err))
+    },
+    orderTotal: (req,res)=>{
+        productModels.orderTotal(req.body.lastweek,req.body.newdate)
+        .then(result => {
+            res.json(result)
         }).catch(err => console.log(err))
     },
 }

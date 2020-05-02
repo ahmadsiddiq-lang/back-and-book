@@ -35,6 +35,17 @@ module.exports = {
             })
         })
     },
+    updateStockProduct: (data,id_product)=>{
+        return new Promise((resolve, reject)=>{
+            connecting.query('UPDATE product SET stock = stock - ? WHERE id_product = ?',[data,id_product], (err, result)=>{
+                if(!err){
+                    resolve(result);
+                }else{
+                    reject(err);
+                }
+            })
+        })
+    },
     deleteProduct: (id_product)=>{
         return new Promise((resolve, reject)=>{
             connecting.query('DELETE FROM product WHERE id_product = ?',id_product, (err, result)=>{
@@ -112,7 +123,7 @@ module.exports = {
             })
         })
     },
-    addToCart: (data, stock, id_product)=>{
+    addToCart: (data)=>{
         return new Promise((resolve, reject)=>{
             connecting.query(`INSERT cart SET ?`,data, (err, result)=>{
                 if(!err){
@@ -125,7 +136,29 @@ module.exports = {
     },
     deleteCart: (id_cart)=>{
         return new Promise((resolve, reject)=>{
-            connecting.query(`DELETE FROM cart WHERE ?`,id_cart, (err, result)=>{
+            connecting.query(`DELETE FROM cart WHERE id_cart = ?`,id_cart, (err, result)=>{
+                if(!err){
+                    resolve(result);
+                }else{
+                    reject(err);
+                }
+            })
+        })
+    },
+    deleteAllCart: ()=>{
+        return new Promise((resolve, reject)=>{
+            connecting.query(`DELETE FROM cart`, (err, result)=>{
+                if(!err){
+                    resolve(result);
+                }else{
+                    reject(err);
+                }
+            })
+        })
+    },
+    updateCart: (data,id_cart)=>{
+        return new Promise((resolve, reject)=>{
+            connecting.query(`UPDATE cart SET ? WHERE id_cart = ?`,[data,id_cart], (err, result)=>{
                 if(!err){
                     resolve(result);
                 }else{
@@ -166,6 +199,39 @@ module.exports = {
     login: (email)=>{
         return new Promise((resolve, reject)=>{
             connecting.query(`SELECT * FROM users WHERE email = ?`,email, (err, result)=>{
+                if(!err){
+                    resolve(result);
+                }else{
+                    reject(err);
+                }
+            })
+        })
+    },
+    incomeInDay: (date)=>{
+        return new Promise((resolve, reject)=>{
+            connecting.query(`SELECT SUM(total_price) AS total FROM history WHERE date_added = '${date}'`, (err, result)=>{
+                if(!err){
+                    resolve(result);
+                }else{
+                    reject(err);
+                }
+            })
+        })
+    },
+    incomeInYear: (year)=>{
+        return new Promise((resolve, reject)=>{
+            connecting.query(`SELECT YEAR(date_added) AS tahun, SUM(total_price) AS total FROM history WHERE YEAR(date_added)= '${year}' GROUP BY YEAR(date_added)`, (err, result)=>{
+                if(!err){
+                    resolve(result);
+                }else{
+                    reject(err);
+                }
+            })
+        })
+    },
+    orderTotal: (lastweek,newdate)=>{
+        return new Promise((resolve, reject)=>{
+            connecting.query(`SELECT COUNT(*) AS orders FROM history WHERE date_added BETWEEN '${lastweek}' AND '${newdate}'`, (err, result)=>{
                 if(!err){
                     resolve(result);
                 }else{

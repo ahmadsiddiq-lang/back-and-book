@@ -9,7 +9,7 @@ const storage = multer.diskStorage({
         cb(null, './upload');
     },
     filename: function(req, file, cb){
-        cb(null, new Date().toISOString().replace(/:/g,'-')+file.originalname);
+        cb(null, new Date().toISOString().replace(/:/g,'-')+file.originalname.replace(/\s/g,'-'));
     }
 });
 
@@ -30,7 +30,8 @@ const upload = multer({
 Router
     .get('/', ProductController.getProduct)
     .post('/insert', upload.single('image'), ProductController.insertProduct)
-    .patch('/update/:id_product', ProductController.updateProduct)
+    .patch('/update/product', ProductController.updateProduct)
+    .patch('/update/stock', ProductController.updateStockProduct)
     .delete('/delete/:id_product', ProductController.deleteProduct)
     .get('/detail/:id_product', ProductController.detailProduct)
     .get('/searc/:name', ProductController.searcProduct)
@@ -38,9 +39,14 @@ Router
     .post('/sort/:name', ProductController.Sort)
     .get('/getcart', ProductController.getCart)
     .post('/cart', ProductController.addToCart)
-    .delete('/deletecart', ProductController.deleteCart)
+    .post('/update/cart', ProductController.updateCart)
+    .delete('/deletecart/:id_cart', ProductController.deleteCart)
+    .delete('/deleteall/cart', ProductController.deleteAllCart)
     .post('/order', ProductController.order)
     .post('/register', ProductController.register)
-    .get('/login', ProductController.login);
+    .post('/login', ProductController.login)
+    .post('/income/day', ProductController.incomeInDay)
+    .post('/income/year', ProductController.incomeInYear)
+    .post('/orders/total', ProductController.orderTotal);
 
 module.exports = Router;
