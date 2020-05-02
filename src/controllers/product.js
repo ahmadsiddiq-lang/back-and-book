@@ -111,8 +111,7 @@ module.exports = {
         }).catch(err => console.log(err))
     },
     order: (req,res)=>{
-        const {total_price, stock, id_product} = req.body;
-        productModels.order(total_price, stock, id_product)
+        productModels.order(req.body.total_price)
         .then(result => {
             res.json(result)
         }).catch(err => console.log(err))

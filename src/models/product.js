@@ -167,18 +167,11 @@ module.exports = {
             })
         })
     },
-    order: (total_price, stock, id_product)=>{
+    order: (total_price)=>{
         return new Promise((resolve, reject)=>{
             connecting.query(`INSERT history SET total_price =  ?`,total_price, (err, result)=>{
                 if(!err){
                     resolve(result);
-                    connecting.query(`UPDATE product SET stock = stock-${stock} WHERE id_product =${id_product}`, (err, result)=>{
-                        if(!err){
-                            resolve(result);
-                        }else{
-                            reject(err);
-                        }
-                    })
                 }else{
                     reject(err);
                 }
