@@ -1,6 +1,6 @@
 const productModels = require('../models/product');
 const bcrypt = require('bcrypt-nodejs');
-
+const jwt = require('jsonwebtoken');
 module.exports = {
     getProduct: (req,res)=>{
         productModels.getProduct()
@@ -133,14 +133,55 @@ module.exports = {
         // email only
         productModels.login(req.body.email)
         .then(result => {
-            const password = bcrypt.compareSync(req.body.password,result[0].password)
-            if(password === true){
-                res.json(req.body.email)
+            if(result.length > 0){
+                // console.log('masuk')
+                const dataPassword = bcrypt.compareSync(req.body.password,result[0].password)
+                if(dataPassword === true){
+                    const email = req.body.email
+                    const password = result[0].password
+                    const token = jwt.sign({email,password}, process.env.PRIVATE_KEY, {expiresIn: '2h'})
+                    // const data = {email,token}
+                    req.session.token = token
+                    res.json(result)
+                }else{
+                    res.json(1)
+                }
             }else{
-                res.json('Password Wrong')
+                res.json(0)
             }
         }).catch(err => console.log(err))
     },
+
+    verifyLogin: (req,res)=>{
+        // console.log(req.token)
+        if(req.token){
+            productModels.login(req.token.email)
+            .then(result=>{
+                if(result.length > 0){
+                    // console.log('masuk')
+                    if(req.token.password === result[0].password){
+                        const email = result[0].email
+                        const password = result[0].password
+                        const token = jwt.sign({email,password}, process.env.PRIVATE_KEY, {expiresIn: '2h'})
+                        // const data = {email,token}
+                        req.session.token = token
+                        res.json(result)
+                    }else{
+                        res.json(1)
+                    }
+                }else{
+                    res.json(0)
+                }
+            })
+        }else{
+            res.json('token infalid')
+        }
+    },
+
+    logout: (req, res) => {
+		req.session = null;
+		res.json("Logout success!");
+	},
     
     incomeInDay: (req,res)=>{
         // console.log(req.body.date)

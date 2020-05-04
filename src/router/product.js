@@ -2,6 +2,7 @@ const express = require('express');
 const Router = express();
 const multer = require('multer');
 const path = require('path');
+const auth = require('../helpers/auth');
 const ProductController = require('../controllers/product');
 
 const storage = multer.diskStorage({
@@ -27,8 +28,10 @@ const upload = multer({
     }
 })
 
+
+
 Router
-    .get('/', ProductController.getProduct)
+    .get('/', auth.verify, ProductController.getProduct)
     .post('/insert', upload.single('image'), ProductController.insertProduct)
     .patch('/update/product', ProductController.updateProduct)
     .patch('/update/stock', ProductController.updateStockProduct)
@@ -45,6 +48,8 @@ Router
     .post('/order', ProductController.order)
     .post('/register', ProductController.register)
     .post('/login', ProductController.login)
+    .get('/verify', auth.verify, ProductController.verifyLogin)
+    .get('/logout', ProductController.logout)
     .post('/income/day', ProductController.incomeInDay)
     .post('/income/year', ProductController.incomeInYear)
     .post('/orders/total', ProductController.orderTotal);
