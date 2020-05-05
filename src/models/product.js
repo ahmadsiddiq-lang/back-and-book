@@ -173,9 +173,9 @@ module.exports = {
             })
         })
     },
-    order: (total_price)=>{
+    order: (data)=>{
         return new Promise((resolve, reject)=>{
-            connecting.query(`INSERT history SET total_price =  ?`,total_price, (err, result)=>{
+            connecting.query(`INSERT history SET ?`,data, (err, result)=>{
                 if(!err){
                     resolve(result);
                 }else{
